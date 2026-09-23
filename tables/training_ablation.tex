@@ -1,0 +1,25 @@
+% Snapshot: 2026-09-23T18:39:36.670856+08:00; provenance: analysis/eval_tables_20260923_1839/results_snapshot_20260923.md
+\begin{table*}[t]
+\caption{\textbf{Framework ablation on DeepPlanning.} Shopping and Travel are separate settings; quality is case accuracy (partial-credit score), in \%. The data comparison replaces MAW synthetic data with AWM data; the reward comparison contrasts outcome-only $O$ with outcome-plus-process $O+P$. The full MAW $O+P$ rows reuse the r11\_482 + SA1550 reference run identified in the experiment plan. * marks provisional values; unmeasured training variants remain pending.}
+\label{tab:training-ablation}
+\centering\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{3pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}llllcccc@{}}
+\toprule
+Setting & Layer & Training data & Architecture / reward & Acc. (Partial) $\uparrow$ & $C\downarrow$ & Time (s) $\downarrow$ & Tokens (k) $\downarrow$ \\
+\midrule
+Shopping & Data & AWM & MA+SA / $O+P$ & \pending & \pending & \pending & \pending \\
+ & Data & MAW synthetic (ours) & MA+SA / $O+P$ & 4.17 (47.03)* & $18.6$* & $84.6$* & \pending \\
+ & Reward & MAW synthetic (ours) & MA+SA / $O$ & \pending & \pending & \pending & \pending \\
+ & Reward & MAW synthetic (ours) & MA+SA / $O+P$ (ours) & 4.17 (47.03)* & $18.6$* & $84.6$* & \pending \\
+\midrule
+Travel & Data & AWM & MA+SA / $O+P$ & \pending & \pending & \pending & \pending \\
+ & Data & MAW synthetic (ours) & MA+SA / $O+P$ & 0.00 (18.75)* & $15.1$* & $143.6$* & \pending \\
+ & Reward & MAW synthetic (ours) & MA+SA / $O$ & \pending & \pending & \pending & \pending \\
+ & Reward & MAW synthetic (ours) & MA+SA / $O+P$ (ours) & 0.00 (18.75)* & $15.1$* & $143.6$* & \pending \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}

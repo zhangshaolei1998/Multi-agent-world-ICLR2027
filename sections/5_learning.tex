@@ -1,0 +1,67 @@
+\section{Orchestration RL with Execution-Grounded Process Rewards}
+\label{sec:learning}
+
+Terminal verification determines whether a task is complete, but provides little differentiation among incomplete rollouts. MAW supplements this outcome signal with evidence of tool progress, answer coverage, and the organization of delegated work. These components form one trajectory reward for the orchestrator.
+
+\subsection{Multi-Agent Interaction Harness}
+
+Given a user request and the available tool descriptions, the orchestrator $\pi_\theta$ dynamically assigns each worker a role and an allowed tool subset through \texttt{create\_subagent}. A registered worker can be reused for later subtasks of the same role. The orchestrator uses \texttt{assign\_task} for an individual assignment and \texttt{assign\_tasks} for concurrent assignments whose results are returned together. It integrates the returned evidence and terminates the episode with \texttt{submit\_answer}.
+
+The orchestrator accesses task tools through workers. Each worker follows the frozen policy $\pi_\phi$, executes its assigned task with the authorized tools, and returns its findings. The runtime records tool events, assignment ownership, and returned results for scoring. Worker generations and tool observations form part of the orchestrator's context but are masked from its policy loss. Appendix~\ref{app:runtime} gives the interface and information boundaries.
+
+\subsection{Answer and Database-State Verification}
+\label{sec:outcome}
+
+For a trajectory $\tau$ with final answer $y_\tau$ and state $s_\tau$, the binary outcome reward requires valid completion, an accepted answer, and the required database state:
+\begin{equation}
+ O(\tau)=\mathbf 1[\mathrm{valid\ completion}]
+ \mathbf 1[V_x^{\mathrm{ans}}(y_\tau)=1]
+ \mathbf 1[V_x^{\mathrm{state}}(s_0,s_\tau)=1].
+ \label{eq:outcome}
+\end{equation}
+The answer checker evaluates the requested output fields and values. The state checker verifies required final mutations and rejects unexpected final changes. For a read-only task, the database must remain unchanged.
+
+State verification is needed when a request contains several database operations: a plausible answer does not establish that a record was created, an update was applied, or unrelated data were preserved. Checking the actual final state prevents these omitted operations from receiving outcome credit solely because the response text is correct. Outcome verification constrains the requested result; it does not require the policy to reproduce the reference call sequence.
+
+\subsection{Execution-Grounded Process Feedback}
+\label{sec:process}
+
+Process feedback examines progress at three levels: which required tool operations have been completed, how much of the requested answer is present, and whether delegated work produces evidence that reaches the final response. The score is grounded in recorded execution, worker returns, and the hidden reference.
+
+\paragraph{Tool progress.}
+The tool score $M$ measures coverage of validated reference milestones. A milestone receives credit when the actual execution contains a successful tool event with matching arguments and observations under the supported normalization rules. Dependency checks require the relevant predecessor evidence to be available. Repeated calls do not add coverage for an already matched milestone.
+
+\paragraph{Answer coverage.}
+The answer score $Q$ gives partial credit for correctly reported results. For dictionary answers, each top-level key--value pair is one row. Scalar and structured values use exact matching; lists use one-to-one element matching, with fractional credit for a partial match. If $m$ is the equivalent number of matched rows and $n_g,n_c$ are the reference and candidate row counts, we use
+\begin{equation}
+ Q=\frac{m}{n_g}\left(0.8+0.2\frac{m}{n_c}\right).
+ \label{eq:answer-coverage}
+\end{equation}
+Empty or invalid submissions receive zero. This recall-oriented score distinguishes partial answers, while the binary outcome still requires full answer and state acceptance.
+
+\paragraph{Organization and integration.}
+Delivery $D$ measures whether workers return the evidence required by their assigned goals. The collaboration score $S$ combines useful goal allocation with evidence handoff and final-answer integration. It penalizes duplicate or irrelevant assignments and limits credit when required results are missing from the final answer. Independent-goal allocation is scored only on references that pass the required dependency and execution-order checks. Stateful or unsupported tasks use conservative progress scoring. These checks use actual events and returned content rather than self-reported completion.
+
+For the supported branch, the process reward is
+\begin{equation}
+ P(\tau)=F\bigl(0.25M+0.25Q+0.20D+0.30S\bigr),
+ \label{eq:process}
+\end{equation}
+where $F\in[0,1]$ measures compliance with explicit ordering constraints in the request. Each component lies in $[0,1]$. Here $S$ includes the integration adjustment to allocation credit; Appendix~\ref{app:process} specifies this notation and the fallback cases. Reference matching can under-credit correct alternative solutions, so process credit supplements outcome verification.
+
+\subsection{Trajectory Reward and Policy Optimization}
+\label{sec:objective}
+
+The final reward prioritizes verified task completion:
+\begin{equation}
+ R(\tau)=O(\tau)+\lambda_pP(\tau),\qquad\lambda_p=0.3.
+ \label{eq:reward}
+\end{equation}
+A successful rollout receives at least $1$, whereas an unsuccessful rollout receives at most $0.3$. Partial progress can therefore distinguish failed rollouts without outweighing successful completion. Execution cost is reported as an evaluation metric and does not enter this training reward.
+
+For each task, we sample $G=8$ independently reset trajectories under the behavior policy and compute group-relative advantages:
+\begin{equation}
+ A_i=\frac{R_i-\overline R}{\operatorname{std}(R_1,\ldots,R_G)+\epsilon}.
+ \label{eq:advantage}
+\end{equation}
+GRPO~\citep{shao2024deepseekmath} applies a clipped policy objective to the orchestrator's generated tokens, using the same trajectory advantage for all those tokens. Worker parameters remain fixed. The process score enriches the trajectory return; it does not assign separate advantages to workers or individual turns. Appendix~\ref{app:training} gives the optimization objective and configuration.

@@ -1,0 +1,45 @@
+\section{Experiments}
+\label{sec:experiments}
+
+The evaluation separates three questions: whether the complete system transfers to external tasks, whether the synthesized data support useful orchestration, and whether the reward improves learning beyond outcome-only optimization. Tables~\ref{tab:main-results}--\ref{tab:training-ablation} define these comparisons. \textbf{Draft status:} the requested synthesis snapshot has been audited, but the final benchmark and training-ablation results are not yet available; their result cells remain placeholders, and the following text specifies the evaluation protocol rather than completed empirical findings.
+
+\subsection{Experimental Setup}
+
+\paragraph{Data and models.}
+The documented development configuration uses Qwen3-8B~\citep{yang2025qwen3}, with both orchestrator and worker initialized from the same single-agent checkpoint. The audited synthesis snapshot contains 2,581 accepted tasks across 539 environments. An earlier training import contains 2,577 tasks; the four-record difference requires an ID-level import audit and is not treated as a held-out split. The final experiments require a frozen training/validation/test manifest, including task provenance and environment overlap checks. Checkpoint selection uses validation performance only. Workers remain frozen across MA comparisons. Appendix~\ref{app:training} records known settings and identifies the remaining configuration fields.
+
+\paragraph{Benchmarks.}
+The working seven-benchmark roster comprises WideSearch~\citep{wong2025widesearch}, DeepPlanning~\citep{zhang2026deepplanning}, MCP Atlas~\citep{bandi2026mcpatlas}, Toolathlon~\citep{li2025toolathlon}, BFCL multi-turn~\citep{patil2025bfcl}, $\tau^2$-Bench~\citep{barres2025tau2bench}, and Terminal-Bench 2.0~\citep{merrill2026terminalbench}. The first four follow the project's existing evaluation integrations; BFCL and $\tau^2$-Bench measure complementary tool-use capabilities, while Terminal-Bench extends the evaluation to terminal tasks. Exact versions, splits, simulators, and metric keys are specified in Appendix~\ref{app:benchmarks} as a manifest to be finalized. Toolathlon-GYM is the execution adapter, not a separate benchmark. Function-calling accuracy and task success are kept in separate columns, and no average combines them. The protocol excludes test tasks and benchmark-derived references from synthesis, reward annotation, and model selection.
+
+\paragraph{Baselines.}
+\emph{Base} is the original tool-capable backbone without additional project training. \emph{Single-agent} is the project's trained single-agent checkpoint executed without workers. \emph{Multi-agent} uses that same checkpoint as an untrained-for-orchestration controller with frozen workers and the MAW runtime. \emph{AWM}~\citep{wang2026agentworldmodelinfinity} and \emph{EnvScaler}~\citep{song2026envscaler} train the same backbone on their respective released environment/task resources under a common outcome-based recipe and evaluate with the same single-agent harness. These controlled adaptations test training-resource utility, rather than reproducing every optimization detail of the original systems. \emph{MAW} adds recursive task construction and orchestration RL. Main-table comparisons are system comparisons; only the controlled ablations isolate individual components.
+
+\paragraph{Budgets and reporting.}
+Every benchmark uses a shared total token cap, timeout, tool-access policy, and decoding configuration across methods, with an additional common worker-concurrency cap for MA systems. Actual orchestrator and worker tokens are both counted. Task failures and policy timeouts stay in the denominator; infrastructure failures are logged separately and handled by a predeclared rerun policy. We report benchmark-native quality metrics and retain per-task logs for paired comparisons. Efficiency reporting includes logical critical-path rounds, total tokens, and wall-clock time over all episodes. Appendix~\ref{app:statistics} defines aggregation and uncertainty estimation.
+
+\input{tables/main_results}
+
+\subsection{Main Results: Task Quality and Execution Efficiency}
+
+Table~\ref{tab:main-results} compares transfer across the seven task families. Base versus Single-agent measures the effect of the existing single-agent training stage. Single-agent versus Multi-agent evaluates adding the orchestration runtime without an orchestration update. Multi-agent versus MAW holds worker quality and interface fixed and tests the additional MAW training stage. AWM and EnvScaler provide executable-synthesis baselines for the complete system. These contrasts must be read alongside training cost and actual inference consumption, rather than attributed entirely to a single reward component.
+
+The final analysis will report absolute differences within each benchmark, uncertainty intervals, and any regressions. A quality improvement accompanied by more computation supports a different conclusion from an improvement at lower cost. Appendix~\ref{app:extended-results} provides the corresponding per-benchmark efficiency table. \drafttodo{Insert the measured benchmark differences and cost tradeoffs; state which comparisons are supported by paired uncertainty estimates.}
+
+\subsection{Orchestration Benefit and Training-Data Utility}
+\label{sec:orchestration-experiments}
+
+Table~\ref{tab:orchestration} separates the execution architecture from the training source. A versus B and C versus D compare SA and MA training on the same source, using outcome-only rewards. A versus C and B versus D compare AWM and MAW data within an architecture at matched training set size and budget. The AWM--MAW source comparison includes differences in task and environment distribution; it is not a pure test of recursion. E versus D measures outcome-only orchestration training from the unchanged initialization, while E versus F evaluates the full training objective. F versus G holds trained weights fixed and measures the effect of permitting concurrent assignments at inference. It does not identify a training effect.
+
+\input{tables/orchestration_ablation}
+
+To isolate construction choices, a second data study holds the underlying environments, synthesis model, and outcome-only MA training recipe fixed. It compares original seeds, direct task synthesis, one-round composition, recursive serial-only composition, recursive parallel-only composition, and full recursion. We evaluate both valid-task yield at a fixed synthesis budget and downstream quality at an equal number of accepted training tasks. These tests distinguish producing more usable data from producing more useful data. Appendix~\ref{app:synthesis} defines acceptance denominators, lineage statistics, and the table for this study.
+
+Structural analysis counts accepted functional goals, dependencies, shared work, and eligible independent goal pairs. Candidate node counts are not substituted for post-reconstruction structure. A held-out trace audit measures useful assignments, duplicated goal allocation, missing evidence, and final goal omissions. These diagnostics test the intended behavior; delegation count alone cannot establish orchestration quality. \drafttodo{Report the matched-data contrasts, construction ablations, and held-out behavior measurements without inferring a benefit from task complexity alone.}
+
+\subsection{Training-Strategy Ablations}
+
+Table~\ref{tab:training-ablation} compares outcome-only training with the full outcome-plus-process reward. Component ablations remove tool-progress credit, answer-coverage credit, or collaboration feedback while keeping the remaining coefficients fixed. All arms share the task set, initialization, frozen workers, training budget, and evaluation instances. Execution cost remains an evaluation metric in every arm.
+
+\input{tables/training_ablation}
+
+The component ablations set the corresponding contribution to zero without redistributing its weight. For unsupported scoring branches, the same conceptual component must be removed consistently; each intervention requires a separate implementation/configuration binding before execution. We report goal coverage and evidence delivery with their supported-task denominators, alongside success under the unchanged final verifier. A larger process score alone is not higher task success. \drafttodo{Complete the reward-branch bindings and report measured ablation results.}

@@ -1,0 +1,7 @@
+\section{Preliminaries: Executable Environments for Orchestration}
+\label{sec:preliminary}
+
+Following the executable-environment setting of AWM and Agent-World~\citep{wang2026agentworldmodelinfinity,dong2026agentworld}, we write an environment as $E=(\mathcal S,\mathcal U,T,s_0,\mathcal X,V)$. Here, $\mathcal S$ is the database-backed state space, $\mathcal U$ is the tool interface, and $T(s_t,a_t)=(s_{t+1},o_{t+1})$ executes a tool call and returns an observation. Each rollout starts from $s_0$ on a task $x\in\mathcal X$, with $V_x$ checking its answer and relevant state.
+
+MAW extends this setting to $E^{\mathrm{orch}}=(\mathcal S,\mathcal U,T,s_0,\mathcal X^{\mathrm{orch}},\mathcal H,\widetilde V)$, where $\mathcal H$ lets an orchestrator delegate subgoals to workers acting on the shared environment. The expanded task set $\mathcal X^{\mathrm{orch}}$ composes multi-step subtasks. For a joint trajectory $\tau$ with answer $y_\tau$ and final state $s_\tau$, verification becomes $\widetilde V_x(\tau)=(V_x^{\mathrm{ans}}(y_\tau),V_x^{\mathrm{state}}(s_0,s_\tau),P_x(\tau))$. Beyond answer correctness, $V_x^{\mathrm{state}}$ checks the environment's full database state for required updates and unexpected changes, since worker reports can omit side effects. The trajectory-level feedback $P_x$ evaluates subgoal progress, evidence handoff, and integration, providing graded supervision for orchestration.
+

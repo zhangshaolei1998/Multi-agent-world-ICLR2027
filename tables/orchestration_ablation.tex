@@ -1,0 +1,28 @@
+% Snapshot: 2026-09-23T18:39:36.670856+08:00; provenance: analysis/eval_tables_20260923_1839/results_snapshot_20260923.md
+\begin{table*}[t]
+\caption{\textbf{Orchestration capability ablation on DeepPlanning.} Quality is case accuracy (partial-credit score), in \%. *: partial/provisional snapshot, 23 September 2026. Claude + Claude Shopping covers 50/120 scored cases; MA-8B + SA-8B Travel covers 225/240 reports. $C$ is reconstructed logical model rounds; time is mean inference seconds per recorded episode. Tokens are recorded-usage lower bounds. Cost coverage, harness versions, and budgets vary across these development runs.}
+\label{tab:orchestration}
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llcccc@{}}
+\toprule
+Setting & Configuration & Acc. (Partial) $\uparrow$ & $C\downarrow$ & Time (s) $\downarrow$ & Tokens (k) $\downarrow$ \\
+\midrule
+Shopping & SA-8B (single-agent) & 2.50 (26.89) & $14.5$* & $26.4$* & $\geq 119.0$* \\
+ & Claude (single-agent) & 33.33 (74.44) & $18.6$* & $159.4$* & $\geq 566.3$* \\
+ & MA-8B + SA-8B & 4.17 (47.03) & $18.6$* & $84.6$* & \pending \\
+ & Claude + SA-8B & 9.17 (56.77) & $58.3$* & $303.0$* & $\geq 782.1$* \\
+ & MA-8B + Claude & \pending & \pending & \pending & \pending \\
+ & Claude + Claude & 42.00 (79.50)* & $62.2$* & $556.5$* & $\geq 1142.8$* \\
+\midrule
+Travel & SA-8B (single-agent) & \pending & $10.3$* & $36.0$* & $\geq 128.8$* \\
+ & Claude (single-agent) & \pending & $8.7$* & $96.0$* & $\geq 361.9$* \\
+ & MA-8B + SA-8B & 0.00 (18.75)* & $15.1$* & $143.6$* & \pending \\
+ & Claude + SA-8B & \pending & $106.1$* & $225.9$* & $\geq 652.8$* \\
+ & MA-8B + Claude & \pending & $10.8$* & $227.4$* & $\geq 143.5$* \\
+ & Claude + Claude & \pending & $35.0$* & $274.2$* & $\geq 403.5$* \\
+\bottomrule
+\end{tabular*}
+\end{table*}

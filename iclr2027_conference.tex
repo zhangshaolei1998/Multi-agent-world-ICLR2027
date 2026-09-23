@@ -1,0 +1,88 @@
+% !TeX program = pdflatex
+% ICLR 2027 English working draft.
+\documentclass{article}
+
+\usepackage{iclr2027_conference, times}
+
+% Optional math commands from https://github.com/goodfeli/dlbook_notation.
+\input{math_commands.tex}
+
+\usepackage{amssymb}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{placeins}
+\usepackage{needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+\graphicspath{{figures/}}
+
+\definecolor{draftred}{RGB}{180,35,35}
+\newcommand{\drafttodo}[1]{\textcolor{draftred}{[\textbf{TODO:} #1]}}
+\newcommand{\maw}{\textsc{Multi-Agent World}}
+\newcommand{\pending}{--}
+\newcommand{\cts}{\textsc{CTS}}
+\newcommand{\yes}{\checkmark}
+\newcommand{\no}{--}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+% Case cards use the same visual vocabulary as the synthesis figures.
+\definecolor{caseink}{HTML}{243748}
+\definecolor{caseteal}{HTML}{398F84}
+\newtcolorbox{systembox}[1]{enhanced,breakable,
+  colback=white,colframe=caseink!65!white,
+  colbacktitle=caseink,coltitle=white,
+  title={#1},fonttitle=\sffamily\bfseries,fontupper=\small,
+  boxrule=0.5pt,arc=1mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  before skip=7pt,after skip=6pt}
+\newcommand{\casepart}[1]{\par\vspace{5pt}%
+  {\color{caseteal!85!black}\sffamily\bfseries #1}\par\nobreak\vspace{3pt}}
+\lstdefinestyle{casejson}{basicstyle=\ttfamily\small,
+  columns=fullflexible,keepspaces=true,breaklines=true,
+  showstringspaces=false,aboveskip=0pt,belowskip=0pt}
+
+
+\title{Multi-Agent World: Scaling Multi-Agent Orchestration Training through Recursive Environment Evolution}
+
+% ICLR submissions are anonymous while \iclrfinalcopy remains commented out.
+\author{Anonymous Authors}
+
+% Uncomment only for the camera-ready version.
+% \iclrfinalcopy
+
+\begin{document}
+\raggedbottom
+
+\maketitle
+
+\begin{abstract}
+\input{sections/0_abstract}
+\end{abstract}
+
+\input{sections/1_introduction}
+\input{sections/3_problem_formulation}
+\input{sections/4_multi_agent_world}
+\input{sections/5_learning}
+\input{sections/6_experiments}
+\input{sections/2_related_work}
+\input{sections/8_conclusion}
+\input{sections/9_statements}
+
+\FloatBarrier
+\bibliography{iclr2027_conference}
+\bibliographystyle{iclr2027_conference}
+
+\clearpage
+\appendix
+\input{sections/a_appendix}
+
+\end{document}

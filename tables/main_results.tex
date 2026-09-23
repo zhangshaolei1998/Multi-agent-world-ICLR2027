@@ -1,0 +1,66 @@
+% Snapshot: 2026-09-23T18:39:36.670856+08:00; provenance: analysis/eval_tables_20260923_1839/results_snapshot_20260923.md
+\begin{table*}[t]
+\caption{\textbf{Agentic tool-use benchmarks.} Native accuracy (\%). * marks a partial or provisional snapshot (23 September 2026); rates use scored cases and exclude ungraded errors. BFCL Overall uses all scored cases available so far. MAW ACEBench is English MultiTurn only. Missing settings remain pending. ToolVerse parentheses retain the supplied gains over the Qwen3-8B reference.}
+\label{tab:agentic-tool-use}
+\label{tab:main-results}
+\centering
+\scriptsize
+\renewcommand{\arraystretch}{1.12}
+\setlength{\tabcolsep}{3pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lrrrrrrrrrrrr@{}}
+\toprule
+\multicolumn{1}{l}{Model} & \multicolumn{5}{c}{BFCL Multi-Turn} & \multicolumn{4}{c}{$\tau^2$-Bench} & \multicolumn{3}{c}{ACEBench-Agent} \\
+\cmidrule(lr){2-6} \cmidrule(lr){7-10} \cmidrule(l){11-13}
+& Base & MissFunc & MissParam & LongContext & Overall & Airline & Retail & Telecom & Overall & MultiStep & MultiTurn & Overall \\
+\midrule
+\multicolumn{13}{l}{\textnormal{Frontier Models}} \\
+DeepSeek-V3.2 & 41.50 & 39.50 & 33.50 & 35.00 & 37.39 & 63.80 & 81.10 & 96.20 & 80.37 & 92.50 & 68.75 & 80.62 \\
+GPT-4.1 & 47.50 & 32.50 & 32.50 & 43.00 & 38.88 & 56.00 & 74.00 & 34.00 & 54.67 & 95.00 & 70.83 & 82.92 \\
+Kimi-K2-Instruct & 62.00 & 41.00 & 44.50 & 55.00 & 50.63 & 56.50 & 70.60 & 65.80 & 64.30 & 85.00 & 73.33 & 79.17 \\
+\midrule
+\multicolumn{13}{l}{\textnormal{Open-Source Foundation Models}} \\
+Qwen3-14B & 53.06* & \pending & \pending & 49.09* & 51.63* & \pending & \pending & \pending & \pending & \pending & \pending & \pending \\
+Qwen3-8B  & 32.00 & 33.50 & 22.00 & 28.00 & 28.88 & 22.00 & 43.20 & 18.40 & 27.87 & 53.44 & 39.58 & 46.51 \\
+\midrule
+\multicolumn{13}{l}{\textnormal{Open-Source Environment Scaling Methods}} \\
+AWM & \pending & \pending & \pending & \pending & \pending & \pending & \pending & \pending & \pending & \pending & \pending & \pending \\
+EnvScaler & 65.50 & \pending & \pending & 68.22* & 66.45* & \pending & \pending & \pending & \pending & \pending & \pending & \pending \\
+ToolVerse (w/ TARA) & 51.50 & 38.50 & 28.50 & 31.50 & 37.50\,(+8.62) & 26.00 & 50.00 & 21.10 & 32.37\,(+4.50) & 60.00 & 63.33 & 61.66\,(+15.15) \\
+\midrule
+MAW (ours) & 53.26* & \pending & \pending & \pending & 53.26* & \pending & 48.44* & \pending & \pending & \pending & 41.70* & \pending \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}
+
+\begin{table*}[t]
+\caption{\textbf{Long-horizon benchmarks.} DeepPlanning is split into Shopping and Travel; cells show case accuracy followed by the partial-credit score in parentheses (all \%). Shopping averages over cases; Travel averages the two language settings. WideSearch reports item F1. MCPMark reports native pass rate on the filesystem setting. * marks partial or provisional results: MAW Travel has 225/240 scored reports (15 missing reports contribute zero to the full-domain metric), WideSearch has 15/200 failed cases scored as zero, and MCPMark has 39/40 graded cases.}
+\label{tab:long-horizon}
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcccc@{}}
+\toprule
+Model & \multicolumn{2}{c}{DeepPlanning: Acc. (Partial)} & WideSearch & MCPMark FS \\
+\cmidrule(lr){2-3}
+& Shopping & Travel & item F1 & Pass rate \\
+\midrule
+\multicolumn{5}{l}{\textnormal{Frontier Models}} \\
+DeepSeek-V3.2 & \pending & \pending & \pending & \pending \\
+GPT-4.1 & \pending & \pending & \pending & \pending \\
+Kimi-K2-Instruct & \pending & \pending & \pending & \pending \\
+\midrule
+\multicolumn{5}{l}{\textnormal{Open-Source Environment Scaling Methods}} \\
+AWM & \pending & \pending & \pending & \pending \\
+EnvScaler & \pending & \pending & \pending & \pending \\
+ToolVerse & \pending & \pending & \pending & \pending \\
+\midrule
+\multicolumn{5}{l}{\textnormal{Open-Source Orchestrator Methods}} \\
+Tool Orchestrator & \pending & \pending & \pending & \pending \\
+ParaManager & \pending & \pending & \pending & \pending \\
+MAW (ours) & 4.17 (47.03) & 0.00 (18.75)* & 18.77* & 12.82* \\
+\bottomrule
+\end{tabular*}
+\end{table*}
