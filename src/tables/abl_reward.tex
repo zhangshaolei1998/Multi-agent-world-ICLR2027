@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering
+\small
+\caption{Ablation on the schedule-aware process reward, with the behavior audit it targets. Each row sets one coefficient of Eq.~\ref{eq:proc} to zero without redistributing the weight. Duplicate is excess assignment ownership per attempted subtask, Handoff counts workers that omit obtained evidence, Integr. counts branch results that are available and absent from the final answer, and $C$ is the number of logical model rounds on the critical path.}
+\label{tab:abl-reward}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lccccccc@{}}
+\toprule
+Training reward & Success \up & Goal cov. \up & Delivery \up & Duplicate \down & Handoff \down & Integr. \down & $C$ \down \\
+\midrule
+Multi-agent (init) & & & & & & & \\
+Outcome only & & & & & & & \\
+\midrule
+w/o tool progress & & & & & & & \\
+w/o answer coverage & & & & & & & \\
+w/o evidence delivery & & & & & & & \\
+w/o schedule term & & & & & & & \\
+\rowcolor{gray!15}
+Full reward (ours) & & & & & & & \\
+\bottomrule
+\end{tabular}
+\end{table}

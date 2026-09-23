@@ -1,0 +1,9 @@
+Multi-agent systems assign complementary subtasks to different agents, and their effectiveness depends on an orchestrator that partitions a request into subtasks, schedules them against their dependencies, and integrates the evidence that workers return.
+Training such an orchestrator requires multi-agent environments, in which a task provides subtasks that can be distributed across agents and a verifier that reports how they were distributed.
+Existing agentic environments are synthesized for a single agent, and they yield mostly linear call chains under terminal-only verification.
+An orchestrator trained inside them therefore has no scheduling decision to learn and no feedback on the decomposition it chose.
+We present \emph{Multi-Agent World} (MAW), an end-to-end framework that develops multi-agent orchestration by coupling multi-agent environment synthesis with multi-agent reinforcement learning.
+MAW introduces \emph{recursive environment improvement}, which recursively composes reference task graphs through serial and parallel operators inside single-agent environments, and turns each composed graph into one coherent request through semantic reconstruction and execution-grounded admission.
+The same composition record identifies which subtasks are verified as independent, which is what a \emph{schedule-aware process reward} needs in order to score the recorded execution of the whole team.
+Trained under this reward with frozen workers, the orchestrator learns to decompose a request, run independent work concurrently, and integrate what the workers return.
+Experiments on six agentic benchmarks show that MAW improves task success by \fillin\ over its single-agent initialization and shortens the execution critical path by \fillin.

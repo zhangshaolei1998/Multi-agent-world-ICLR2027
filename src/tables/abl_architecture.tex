@@ -1,0 +1,21 @@
+\begin{table}[t]
+\centering
+\small
+\caption{Effect of the execution architecture, the training source, and the training reward. Settings A to D use an outcome-only reward at an equal training-set size, E adds the schedule-aware process reward, and F reuses the weights of E with concurrent assignments serialized at inference. $C$ is the number of logical model rounds on the critical path, and tokens are summed over the orchestrator and every worker.}
+\label{tab:abl-arch}
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}clllccc@{}}
+\toprule
+& Training source & Execution & Reward & Success (\%) \up & $C$ \down & Tokens (k) \down \\
+\midrule
+A & AWM & Single-agent & Outcome & & & \\
+B & AWM & Multi-agent & Outcome & & & \\
+C & MAW & Single-agent & Outcome & & & \\
+D & MAW & Multi-agent & Outcome & & & \\
+\rowcolor{gray!15}
+E & MAW & Multi-agent & Outcome + process & & & \\
+F & MAW & Multi-agent, serialized & Outcome + process & & & \\
+\bottomrule
+\end{tabular}
+\end{table}

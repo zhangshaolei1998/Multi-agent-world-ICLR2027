@@ -1,0 +1,33 @@
+\section{Related Work}
+\label{sec:rw}
+
+\paragraph{Environment Synthesis for Single-Agent Training.}
+Training an agent with reinforcement learning requires environments that execute, hold state, and verify outcomes automatically, and a recent line of work builds such environments at scale for one agent.
+AWM synthesizes code-backed worlds with structured databases and rule-based checkers, thereby delivering a task with executable tools and a verifiable answer~\citep{wang2026agentworldmodelinfinity}.
+EnvScaler separates the construction of an environment skeleton from the generation of scenarios and validators, which raises the yield of usable tasks~\citep{song2026envscaler}.
+Agent-World pairs environment discovery with a diagnostic loop that keeps tasks near the current ability of the policy~\citep{dong2026agentworld}, and ToolVerse follows tool dependencies to build long-horizon tasks~\citep{zhou2026toolverse}.
+Further work adapts existing environments through interface components or learns an environment-design role through self-play~\citep{huang2026envharness,liu2026spade}.
+Overall, these systems produce executable and automatically verified tasks for a single agent that observes every tool return itself.
+Such a task rarely contains subtasks that several agents can execute simultaneously, and its verifier reports only whether one agent finished.
+
+\paragraph{Multi-Agent Collaboration and Orchestration Training.}
+Multi-agent systems differ mainly in how the collaboration structure is decided.
+AutoGen organizes collaboration as conversations between agents~\citep{wu2023autogenenablingnextgenllm}, and MetaGPT encodes standardized operating procedures as role-based workflows~\citep{hong2024metagptmetaprogrammingmultiagent}.
+In both cases a human authors the structure and the structure stays fixed during execution.
+A second group searches the structure automatically, through optimizable agent graphs~\citep{zhuge2024languageagentsoptimizablegraphs}, workflow generation~\citep{zhang2025aflowautomatingagenticworkflow,hu2025automateddesignagenticsystems}, and agentic supernets that select a topology per query~\citep{zhang2025maasagenticsupernet}.
+Although search improves the structure, the selected structure still fixes collaboration once execution starts.
+A third group updates the model that performs the orchestration.
+Representative methods include evolving orchestration for agent collaboration~\citep{dang2025puppeteer}, parallel agent reinforcement learning that credits critical steps~\citep{kimiteam2026kimik25}, and unified agent and tool orchestration with parallel subtask decomposition~\citep{yuan2026paramanager}.
+Overall, learned orchestration is established as feasible.
+In these studies, the branch structure of the training distribution is inherited from existing benchmarks, thereby remaining neither controlled during construction nor available during reward computation.
+
+\paragraph{Positioning of MAW in Multi-Agent Training.}
+In this work, we focus on how the multi-agent environments an orchestrator trains in relate to the signal it trains under.
+Within backends that already execute and verify, our goal is to scale orchestration training.
+Unlike environment synthesis that targets a single agent, MAW treats branch structure as a construction variable and composes reference task graphs with serial and parallel operators.
+Dependencies and independent branches are thereby written into a task on purpose.
+Unlike orchestration learning that consumes a fixed task distribution and scores a rollout by terminal success, MAW adopts a more deliberate design by carrying the construction record into training.
+Specifically, the schedule of the agent team is scored against the independent subtasks that composition has already verified.
+We state what is new here precisely.
+Learned orchestration and synthesized environments have both been studied, and synthesizing an environment for the orchestration signal itself has not.
+In MAW, one construction supplies the task, its branches, and the ground truth that scores how those branches are used.

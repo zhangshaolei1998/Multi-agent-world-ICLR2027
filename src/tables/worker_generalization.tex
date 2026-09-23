@@ -1,0 +1,20 @@
+\begin{table}[t]
+\centering
+\small
+\caption{Generalization of the trained orchestrator across worker backbones. The orchestrator is trained once with frozen Qwen3-8B workers and then paired with different workers at inference without further updates.}
+\label{tab:worker}
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}llccc@{}}
+\toprule
+Orchestrator & Workers & Success (\%) \up & $C$ \down & Delivery \up \\
+\midrule
+Single-agent (init) & Qwen3-8B & & & \\
+\rowcolor{gray!15}
+MAW & Qwen3-8B & & & \\
+Single-agent (init) & Qwen3-14B & & & \\
+\rowcolor{gray!15}
+MAW & Qwen3-14B & & & \\
+\bottomrule
+\end{tabular}
+\end{table}

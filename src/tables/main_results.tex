@@ -1,0 +1,36 @@
+\begin{table}[t]
+\centering
+\small
+\caption{Performance on six agentic benchmarks. Every trained system uses a Qwen3-8B backbone, and Qwen3-14B is listed as an untrained reference only. Metrics are multi-turn accuracy, task success, case accuracy, item F1, and pass rate, all in \%. \colorbox{gray!15}{Shaded} marks our method and \textbf{bold} marks the best 8B result per column.}
+\label{tab:main}
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+\multirow{2}{*}{Model} & BFCL MT & $\tau^2$-Bench & ACEBench & DeepPlanning & WideSearch & MCPMark \\
+ & Accuracy & Success & Success & Case Acc. & Item F1 & Pass Rate \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Frontier Models}} \\
+DeepSeek-V3.2 & 37.39 & 80.37 & 80.62 & & & \\
+GPT-4.1 & 38.88 & 54.67 & 82.92 & & & \\
+Kimi-K2-Instruct & 50.63 & 64.30 & 79.17 & & & \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Open-Source Backbones}} \\
+Qwen3-14B & & & & & & \\
+Qwen3-8B & 28.88 & 27.87 & 46.51 & & & \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Single-Agent Environment Synthesis}} \\
+AWM & & & & & & \\
+EnvScaler & & & & & & \\
+ToolVerse & 37.50 & 32.37 & 61.66 & & & \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Orchestration Training (8B)}} \\
+Single-agent (init) & & & & & & \\
+Puppeteer & & & & & & \\
+ParaManager & & & & & & \\
+Multi-agent (init) & & & & & & \\
+\rowcolor{gray!15}
+MAW (ours) & & & & & & \\
+\bottomrule
+\end{tabular}
+\end{table}

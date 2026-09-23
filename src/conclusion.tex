@@ -1,0 +1,14 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We presented MAW, an end-to-end framework that develops multi-agent orchestration by synthesizing multi-agent environments and training an orchestrator inside them.
+Recursive environment improvement composes the reference graphs of single-agent tasks, reconstructs each composed graph into one coherent request, and admits it only after execution, replay, and semantic review.
+The same construction verifies which subtasks are independent, which is what a schedule-aware process reward needs in order to score the whole team.
+MAW thereby derives the environment in which the agents act and the ground truth that scores them from one construction.
+Experiments on six agentic benchmarks show that this design improves task success and shortens the execution critical path.
+
+The framework has four limitations.
+Reward matching is anchored on a reference execution, which gives a correct alternative solution less process credit than a reference-matching one.
+The schedule term also covers only the tasks whose independence survives a reordered execution.
+Measured in logical model rounds, the critical path omits tool latency, so we establish a shorter critical path and not a proportional reduction in wall-clock time.
+Requiring at least one delegation, the current interface never teaches the orchestrator when to solve a task alone, and evidence from one model scale with frozen workers leaves jointly trained teams for future work.

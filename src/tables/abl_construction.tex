@@ -1,0 +1,21 @@
+\begin{table}[t]
+\centering
+\small
+\caption{Ablation on multi-agent environment synthesis. All rows share the backends, the generator, the admission checks, and the outcome-only recipe. Yield is admitted tasks per fixed generation budget, $|\Pi|$ is the number of verified independent subtask pairs per admitted task, and success is held-out task success at an equal number of admitted tasks.}
+\label{tab:abl-construction}
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Training-task source & Yield (\%) \up & Subtasks / task & $|\Pi|$ / task & Success (\%) \up \\
+\midrule
+Original seed tasks & & & & \\
+Direct multi-goal synthesis & & & & \\
+One-round composition & & & & \\
+Recursive serial-only & & & & \\
+Recursive parallel-only & & & & \\
+\rowcolor{gray!15}
+Recursive environment improvement (ours) & & & & \\
+\bottomrule
+\end{tabular}
+\end{table}

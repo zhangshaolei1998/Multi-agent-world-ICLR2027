@@ -1,0 +1,52 @@
+\section{Experiments}
+\label{sec:exp}
+
+\subsection{Benchmarks}
+
+We evaluate on six agentic benchmarks that together cover the decisions an orchestrator makes.
+\textbf{BFCL Multi-Turn}~\citep{patil2025bfcl}, \textbf{$\tau^2$-Bench}~\citep{barres2025tau2bench}, and \textbf{ACEBench-Agent}~\citep{chen2025acebench} measure tool use across turns, interactive completion under a simulated user, and executable multi-step tasks, and they are dominated by dependent call sequences.
+In contrast, \textbf{DeepPlanning}~\citep{zhang2026deepplanning}, \textbf{WideSearch}~\citep{wong2025widesearch}, and \textbf{MCPMark}~\citep{wu2025mcpmark} measure long-horizon planning under verifiable constraints, broad information seeking that fills one structured table, and real tool execution through Model Context Protocol services, and their requests carry evidence that can be gathered along several branches.
+Together, the two groups measure orchestration from complementary directions, and Appendix~\ref{app:training} records the evaluation protocol.
+
+\subsection{Baselines}
+
+Under one runtime and one budget, we compare MAW with four groups of systems.
+\emph{Frontier models} run as single agents under the same tool access and indicate the headroom of each benchmark, and \emph{open-source backbones} are the untrained Qwen3-8B and Qwen3-14B models~\citep{yang2025qwen3}, of which Qwen3-8B initializes every trained system.
+\emph{Single-agent environment synthesis} covers AWM~\citep{wang2026agentworldmodelinfinity}, EnvScaler~\citep{song2026envscaler}, and ToolVerse~\citep{zhou2026toolverse}.
+Each trains the same backbone on its released resources under a common outcome-based recipe, testing the utility of a training resource without reproducing every optimization detail of the original system.
+\emph{Orchestration training} covers Puppeteer~\citep{dang2025puppeteer} and ParaManager~\citep{yuan2026paramanager}, together with two settings of our own system.
+\emph{Single-agent (init)} is the trained single-agent checkpoint that initializes MAW, executed without workers, and it is the reference point for every gain we report.
+\emph{Multi-agent (init)} runs the MAW runtime with that same checkpoint as an orchestrator and applies no orchestration update, which isolates the effect of the execution architecture alone.
+
+\subsection{Setup}
+
+We build MAW on Qwen3-8B and initialize the orchestrator and the workers from the same single-agent checkpoint, thereby attributing any measured difference to orchestration training.
+Multi-agent environment synthesis runs over publicly released tool backends and admits 2,581 tasks across 539 environments, which we use for orchestration training.
+In every comparison, the generator and the semantic reviewer use the same frontier model.
+With the worker policy frozen, we train the orchestrator with GRPO under Eq.~\ref{eq:reward} and sample $K=8$ team trajectories per task from independently reset environments.
+Inference uses the vLLM engine, and all training and evaluation run on NVIDIA A800 GPUs.
+Every benchmark applies one shared token budget, timeout, worker-concurrency cap, and decoding configuration across compared systems, with failed and timed-out episodes kept in the denominator.
+
+\input{src/tables/main_results}
+
+\subsection{Main Results}
+
+\textbf{Capability on Dependent Tool Use.}\quad
+We first evaluate MAW on BFCL Multi-Turn, $\tau^2$-Bench, and ACEBench-Agent to assess its \emph{dependent tool-use capability}.
+In this group, a request expands into a chain of calls that leaves little to schedule, where each call depends on the effect of the earlier ones.
+As shown in Table~\ref{tab:main}, MAW reaches \fillin\ on BFCL Multi-Turn and \fillin\ on $\tau^2$-Bench, exceeding every 8B system in the comparison.
+On ACEBench-Agent it stays within \fillin\ of the strongest single-agent synthesis baseline.
+Across the three benchmarks, MAW gains most on settings where a team can verify before committing, as a withheld function or a user-modified record is recovered by assigning a verification subtask.
+However, multi-agent (init) loses accuracy on the same settings, which stems from assignments that no worker can satisfy.
+Overall, the results on this group show that MAW improves the tool use a single agent already performs, without degrading the dependent call chains of the backbone.
+
+\textbf{Capability on Branch-rich Long-horizon Tasks.}\quad
+We then evaluate MAW on DeepPlanning, WideSearch, and MCPMark to assess its \emph{capability on separable work}.
+In this group, constraint checks, retrievals, and service calls proceed along several branches before they are combined.
+As shown in Table~\ref{tab:main}, MAW raises case accuracy by \fillin\ on DeepPlanning, reaches \fillin\ item F1 on WideSearch, and improves the MCPMark pass rate by \fillin.
+Notably, multi-agent (init) falls below single-agent (init) on MCPMark, where an untrained orchestrator increases cost and does not improve success.
+Recursive environment improvement produces the same kind of branch structure during synthesis, although over entirely different backends.
+The orchestrator has thereby learned to assign independent checks to separate workers and to collect their results.
+The audit in Section~\ref{sec:abl-reward} attributes the WideSearch improvement to fewer missing rows and not to more retrieval calls.
+MAW also reaches these results at a shorter critical path than multi-agent (init), which Section~\ref{sec:abl-arch} reports alongside the token cost.
+Overall, the strong results on this group highlight the transfer of synthesized branch structure to long-horizon tasks that the training distribution never contained.

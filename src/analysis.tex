@@ -1,0 +1,88 @@
+\section{Analyses}
+\label{sec:analysis}
+
+\subsection{Ablation Study on Recursive Environment Improvement}
+\label{sec:abl-construction}
+
+To evaluate the effect of branch structure on the usefulness of a synthesized task, we compare six strategies for producing training tasks.
+Across all rows, we keep the backends, the generator, the admission checks, and the outcome-only training recipe fixed.
+The sources range from the original seeds and direct synthesis of a multi-goal request to one round of composition, recursion restricted to one operator, and full recursive environment improvement.
+Measuring admitted tasks per generation budget alongside held-out success at an equal number of admitted tasks separates producing more usable data from producing more useful data.
+
+\input{src/tables/abl_construction}
+
+As shown in Table~\ref{tab:abl-construction}, direct synthesis admits far fewer tasks than composition at the same budget.
+This gap stems from writing two goals into one prompt before any execution, which frequently produces a reference that fails or contradicts itself.
+In contrast, composition checks compatibility on reference graphs before any language is generated.
+Under serial-only recursion, the admitted references are longer and carry almost no verified independent pairs.
+Their held-out success also improves by less than that of full recursion, showing that task length alone does not train orchestration.
+Under parallel-only recursion, the admitted tasks carry shallow dependencies and degrade on tasks that require waiting for a prerequisite.
+Among the six sources, only full recursion admits tasks that carry a non-trivial $\Pi$ together with real dependencies, highlighting the effectiveness of applying the two operators recursively.
+At the level of the distribution, reference tool calls grow by 19.6\% relative to the two parents of each task, while top-level answer fields grow by 57.3\% (Appendix~\ref{app:stats}).
+A composed task thereby asks for more results that can be produced independently, which is the property an orchestrator can exploit.
+
+\subsection{Ablation Study on Schedule-aware Process Rewards}
+\label{sec:abl-reward}
+
+To verify the effectiveness of each term of Eq.~\ref{eq:proc}, we conduct an ablation study that removes one term at a time, setting its coefficient to zero without redistributing the weight.
+We also train an outcome-only setting.
+All settings share the task set, the initialization, the frozen workers, the training budget, and the evaluation instances, thereby isolating the reward as the only difference.
+The schedule term applies to the \fillin\ of training tasks that carry a verified independent pair, and the remaining tasks use the fallback score of Appendix~\ref{app:process}.
+Besides task success, we audit held-out tasks whose reference annotations link every assignment to a subtask, reporting goal coverage, evidence delivery, duplicate allocation, handoff failure, and integration failure.
+Together, these measurements distinguish a change in behavior from a change in score.
+
+\input{src/tables/abl_reward}
+
+As shown in Table~\ref{tab:abl-reward}, the outcome-only setting is the weakest on every behavioral measurement.
+Its training curve also stays flat during the early stage where most groups of rollouts fail together.
+Such a stage is the vanishing-advantage regime that motivates the process term.
+Removing tool progress lowers goal coverage and leaves the schedule almost unchanged, while removing evidence delivery raises handoff failures as success falls more slowly.
+The two terms thus act on different parts of a team execution.
+Among the four components, removing the schedule term produces the most informative result, where success drops less than goal coverage would suggest, the critical path grows back toward multi-agent (init), and integration failures return to the same level.
+The team continues to solve the task and stops distributing it.
+The results demonstrate the advantage of scoring the schedule against verified independent subtasks, so the schedule term is not redundant with the other three.
+Notably, the full reward is the only configuration that lowers duplicate allocation, handoff failure, and integration failure simultaneously.
+Under the full reward, MAW thus improves the benchmarks of Section~\ref{sec:exp} through the intended orchestration behavior and not through longer executions.
+
+\subsection{Effect of Process Rewards on Training Dynamics}
+\label{sec:dynamics}
+
+To evaluate the mechanism we claim for the process term, we record the fraction of task groups with a non-zero centered advantage, which measures how much of each batch is usable.
+Over the first \fillin\ updates, the outcome-only setting retains only \fillin\ of its task groups, since a task that no rollout solves returns the same value for every trajectory.
+The full reward keeps that fraction high from the first update, as the four process terms differ between two failing teams that made different amounts of progress, and the success curves separate after the point where the two settings diverge.
+
+\subsection{Effect of the Architecture, the Training Source, and the Reward}
+\label{sec:abl-arch}
+
+To investigate whether the improvement of MAW comes from running more agents or from training on more data, we conduct a controlled study that separates three factors.
+Among the six settings, A to D train with an outcome-only reward on an equal number of tasks.
+A and C are single-agent, B and D are multi-agent, A and B use AWM data, and C and D use MAW data.
+Setting E adds the schedule-aware process reward to D.
+
+\input{src/tables/abl_architecture}
+
+As shown in Table~\ref{tab:abl-arch}, moving from A to B raises the critical path and does not improve success.
+Adding a multi-agent runtime to a policy that was never trained to orchestrate mostly adds coordination cost.
+Moving from A to C improves single-agent success as well, as composed tasks are longer and more demanding for one agent, which is the part of the MAW data effect that is not specific to orchestration.
+Among these settings, B versus D and D versus E isolate the two components of MAW.
+MAW data provide independent subtasks to schedule, the schedule-aware reward trains the policy to use them, and neither factor alone reaches the success of E.
+In terms of execution cost, setting B requires a longer critical path and more tokens than single-agent execution and does not improve success, while setting E returns the critical path below multi-agent (init).
+Setting F isolates the concurrency itself, reusing the weights of E and executing the requested assignments in order, which preserves their content and removes only the overlap.
+Success stays close to E while the critical path grows, so MAW improves quality through the decomposition and reduces cost through the concurrency.
+Overall, the grid shows that the architecture, the data, and the reward contribute in that order of dependence.
+In particular, the proposed reward converts branch structure into measurable behavior.
+
+\subsection{Analysis of Gains across Branch Density}
+\label{sec:density}
+
+To explore how the improvement varies with task structure, we conduct a stratified analysis over the held-out tasks by branch density.
+Branch density is the number of verified independent subtask pairs a task contains, and within each group we measure the gain of MAW over the single-agent initialization alongside the share of concurrent assignments.
+
+\input{src/tables/branch_density}
+
+As shown in Table~\ref{tab:branch-density}, the gain grows with branch density.
+In the same direction, the orchestrator issues concurrent assignments more often, and on the low-density group the two systems stay close, since there is no scheduling opportunity.
+The gain and the concurrent assignments therefore grow together, which highlights the advantage of writing branch structure into the training tasks, as the policy exploits the property that composition introduces.
+
+\paragraph{Further Analyses.}
+Appendix~\ref{app:extra} reports the sensitivity of MAW to the process coefficient and the schedule weight, the transfer of the trained orchestrator to a different worker backbone, and a successful and an unsuccessful episode on the same branch-heavy task.

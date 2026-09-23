@@ -1,0 +1,90 @@
+% !TeX program = pdflatex
+% Multi-Agent World, ICLR 2027 submission.
+% This file is the revised manuscript. The original draft remains in
+% iclr2027_conference.tex and sections/ and is not modified.
+\documentclass{article}
+
+\usepackage{iclr2027_conference, times}
+
+\input{math_commands.tex}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{colortbl}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{placeins}
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+\graphicspath{{figures/}}
+
+% ---------------------------------------------------------------------------
+% Shorthands
+% ---------------------------------------------------------------------------
+\newcommand{\maw}{\textsc{MAW}}
+\newcommand{\up}{$\uparrow$}
+\newcommand{\down}{$\downarrow$}
+% Slot for a measurement that the authors fill in after the final runs.
+\newcommand{\fillin}{\underline{\hspace{1.6em}}}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+% Case cards in the appendix.
+\definecolor{caseink}{HTML}{243748}
+\definecolor{caseteal}{HTML}{398F84}
+\newtcolorbox{systembox}[1]{enhanced,breakable,
+  colback=white,colframe=caseink!65!white,
+  colbacktitle=caseink,coltitle=white,
+  title={#1},fonttitle=\sffamily\bfseries,fontupper=\small,
+  boxrule=0.5pt,arc=1mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  before skip=7pt,after skip=6pt}
+\newcommand{\casepart}[1]{\par\vspace{5pt}%
+  {\color{caseteal!85!black}\sffamily\bfseries #1}\par\nobreak\vspace{3pt}}
+\lstdefinestyle{casejson}{basicstyle=\ttfamily\small,
+  columns=fullflexible,keepspaces=true,breaklines=true,
+  showstringspaces=false,aboveskip=0pt,belowskip=0pt}
+
+\title{Multi-Agent World: Scaling Multi-Agent Orchestration Training\\ via Recursive Environment Improvement and Schedule-Aware Rewards}
+
+\author{Anonymous Authors}
+
+% Uncomment only for the camera-ready version.
+% \iclrfinalcopy
+
+\begin{document}
+\raggedbottom
+
+\maketitle
+
+\begin{abstract}
+\input{src/abstract}
+\end{abstract}
+
+\input{src/intro}
+\input{src/rw}
+\input{src/method}
+\input{src/exp}
+\input{src/analysis}
+\input{src/conclusion}
+
+\FloatBarrier
+\bibliography{main}
+\bibliographystyle{iclr2027_conference}
+
+\clearpage
+\appendix
+\input{src/appendix}
+
+\end{document}
